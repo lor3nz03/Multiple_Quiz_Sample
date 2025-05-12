@@ -13,10 +13,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         questions.forEach((q, index) => {
             const questionDiv = document.createElement("div");
             questionDiv.classList.add("question-block");
-            questionDiv.innerHTML = `<p><strong>${q.domanda}</strong></p>`;
+            questionDiv.innerHTML = `<p><strong>${q.question}</strong></p>`;
 
-            q.risposte.forEach((risp, i) => {
-                const radioId = `q${index}_${i}`;
+            Object.entries(q.options).forEach(([key, option]) => {
+                const radioId = `q${index}_${key}`;
                 const label = document.createElement("label");
                 label.classList.add("answer-label");
                 label.htmlFor = radioId;
@@ -24,11 +24,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const radio = document.createElement("input");
                 radio.type = "radio";
                 radio.name = `q${index}`;
-                radio.value = String.fromCharCode(65 + i); // A, B, C, D
+                radio.value = key; // A, B, C, D
                 radio.id = radioId;
 
                 label.appendChild(radio);
-                label.appendChild(document.createTextNode(` ${risp}`)); // Testo accanto al radio
+                label.appendChild(document.createTextNode(` ${option}`)); // Testo accanto al radio
 
                 questionDiv.appendChild(label);
             });
@@ -57,24 +57,15 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                 });
 
-                if (!rispostaData) {
-                    options.forEach(opt => {
-                        const label = document.querySelector(`label[for="${opt.id}"]`);
-                        if (opt.value === q.corretta) {
-                            label.classList.add("correct");
-                        }
-                    });
-                }
-
                 options.forEach(opt => {
                     const label = document.querySelector(`label[for="${opt.id}"]`);
 
-                    if (opt.value === q.corretta) {
+                    if (opt.value === q.answer) {
                         label.classList.add("correct");
                     }
 
                     if (opt.checked) {
-                        if (opt.value === q.corretta) {
+                        if (opt.value === q.answer) {
                             punteggio++;
                         } else {
                             label.classList.add("wrong");

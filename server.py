@@ -1,40 +1,27 @@
 from flask import Flask, jsonify, render_template
 import os
+import json
 
 app = Flask(__name__)
 
 def carica_domande():
-    file_path = "domande.txt"
+    file_path = "questions.json"
 
     # Controllo se il file esiste
     if not os.path.exists(file_path):
-        print("❌ ERRORE: Il file domande.txt non esiste!")
+        print("❌ ERRORE: Il file questions.json non esiste!")
         return []
     
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            lines = file.readlines()
+            questions = json.load(file)
         
-        if not lines:
-            print("❌ ERRORE: Il file domande.txt è vuoto!")
+        if not questions:
+            print("❌ ERRORE: Il file questions.json è vuoto!")
             return []
 
-        domande = []
-        i = 0
-        while i < len(lines):
-            if i + 5 >= len(lines):  # Se non ci sono abbastanza righe per una domanda
-                print(f"⚠️ Errore nel formato delle domande (riga {i+1})")
-                break
-
-            domanda = lines[i].strip()
-            risposte = [lines[i+1].strip()[3:], lines[i+2].strip()[3:], lines[i+3].strip()[3:], lines[i+4].strip()[3:]]
-            corretta = lines[i+5].strip()
-
-            domande.append({"domanda": domanda, "risposte": risposte, "corretta": corretta})
-            i += 6  # Passa alla prossima domanda
-
-        print(f"✅ Caricate {len(domande)} domande!")
-        return domande
+        print(f"✅ Caricate {len(questions)} domande!")
+        return questions
 
     except Exception as e:
         print(f"❌ ERRORE durante la lettura del file: {e}")
